@@ -1,10 +1,11 @@
-### Install
-{{{
-# git clone me
-bundle install
-}}}
+
+### About
+HackerCast is a webRTC demo
 
 ### Usage
-{{{
+```
+bundle install
+rails s &
+./lib/websocket_server.rb
 
-}}}
+```
