@@ -17,8 +17,15 @@ module SignalDispatch
       @queue = EM::Queue.new
     end
 
-    def handle_message(msg)
+    def queue_message(msg)
       @queue.push(msg)
+    end
+
+    def forward_queue!
+      @queue.pop do |msg|
+        @pair.websocket.send(msg)
+        forward_queue!
+      end
     end
 
     def set_pair(other)
@@ -26,9 +33,7 @@ module SignalDispatch
       unless other.pair
         other.set_pair(self)
       end
-      @queue.pop do |msg|
-        @pair.websocket.send(msg)
-      end
+      forward_queue!
       @pair
     end
   end
@@ -44,7 +49,7 @@ module SignalDispatch
         EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 8080) do |ws|
           ws.onopen { |handshake| Signaller.instance.add_client(ws) }
           ws.onclose { Signaller.instance.remove_client(ws) }
-          ws.onmessage { |msg| Signaller.instance.handle_message(ws) }
+          ws.onmessage { |msg| Signaller.instance.handle_message(ws, msg) }
         end
       end
     end
@@ -63,7 +68,7 @@ module SignalDispatch
     end
 
     def handle_message(ws, msg)
-      @clients[ws].handle_message(msg)
+      @clients[ws].queue_message(msg)
     end
 
     # PAIR EM UP
