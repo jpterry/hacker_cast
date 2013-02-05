@@ -7,5 +7,4 @@ HackerCast is a webRTC demo
 bundle install
 rails s &
 ./lib/websocket_server.rb
-
 ```
