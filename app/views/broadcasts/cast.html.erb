@@ -1,0 +1,28 @@
+
+<meta name="room_id" content="<%= @room_id %>">
+<meta name="client_id" content="<%= @client_id %>">
+
+<% content_for :head do %>
+    <script type='text/javascript'>
+        $(function(){
+           <% if @is_broadcaster -%>
+           window.HC.init_caller();
+           <% else -%>
+           window.HC.init_callee();
+           <% end %>
+        });
+    </script>
+<% end %>
+
+<div class="row">
+  <div class="twelve columns">
+    <h2>Hacker Cast</h2>
+    <hr />
+  </div>
+</div>
+
+<div id="transmit_container">
+  <video id='outbound' autoplay></video>
+  <video id='inbound' autoplay></video>
+</div>
+

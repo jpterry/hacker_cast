@@ -60,7 +60,9 @@ module SignalDispatch
 
     def add_client(ws)
       @clients[ws] = Client.new(ws)
-      pair_if_possible(@clients[ws])
+      unless pair_if_possible(@clients[ws])
+        ws.send({msg: "You're the broadcaster", type: 'ask' }.to_json)
+      end
     end
 
     def remove_client(ws)
